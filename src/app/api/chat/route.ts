@@ -3,10 +3,6 @@ import OpenAI from 'openai';
 import { v4 as uuidv4 } from 'uuid';
 import type { GeneratedImage, ImageSize } from '@/types';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 // ─── System prompt ────────────────────────────────────────────────────────────
 
 const SYSTEM_PROMPT = `You are VizzyChat, a creative AI assistant specialized in visual content generation.
@@ -87,6 +83,8 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     );
   }
+
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   let body: { messages: Array<{ role: string; content: string }> };
   try {
@@ -175,7 +173,8 @@ export async function POST(req: NextRequest) {
           style,
         });
 
-        const data = result.data[0];
+        const data = result.data?.[0];
+        if (!data) throw new Error('No image data returned');
         return {
           id: uuidv4(),
           url: data.url ?? '',
