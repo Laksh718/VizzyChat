@@ -4,6 +4,7 @@ import React, { useCallback, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu } from 'lucide-react';
+import VizzyLogo from '@/components/ui/VizzyLogo';
 import { ChatProvider, useChat } from '@/lib/ChatContext';
 import { generateId, truncate } from '@/lib/utils';
 import type { Message, GeneratedImage } from '@/types';
@@ -117,14 +118,14 @@ function ChatContent() {
     activeConversation?.messages.some((m) => m.isGenerating) ?? false;
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#0a0a0a]">
+    <div className="flex h-screen w-screen overflow-hidden bg-[#080810]">
       {/* Sidebar */}
       <Sidebar />
 
       {/* Main chat area */}
       <div className="flex flex-col flex-1 min-w-0 h-full">
         {/* Top bar */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-[#1a1a1a] flex-shrink-0">
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-[rgba(255,255,255,0.06)] bg-[#080810]/80 backdrop-blur-sm flex-shrink-0">
           <AnimatePresence mode="wait">
             {!sidebarOpen && (
               <motion.button
@@ -132,7 +133,7 @@ function ChatContent() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -8 }}
                 onClick={toggleSidebar}
-                className="p-1.5 rounded-lg hover:bg-[#1a1a1a] text-[#6b6b6b] hover:text-white transition-colors"
+                className="p-1.5 rounded-xl hover:bg-[#13131f] text-[#55556a] hover:text-white transition-colors"
               >
                 <Menu size={17} />
               </motion.button>
@@ -140,21 +141,25 @@ function ChatContent() {
           </AnimatePresence>
 
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-md bg-gradient-to-br from-violet-600 to-purple-700 flex items-center justify-center">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="white">
-                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-              </svg>
-            </div>
-            <span className="text-[13px] font-medium text-[#a1a1a1]">
+            <VizzyLogo size={26} showTail={false} />
+            <span
+              className="text-[13px] font-semibold text-[#9090b0]"
+              style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
+            >
               {activeConversation?.title ?? 'New Chat'}
             </span>
           </div>
 
           {isLoading && (
-            <div className="ml-auto flex items-center gap-1.5 text-[#6b6b6b] text-[12px]">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="ml-auto flex items-center gap-1.5 text-[12px] text-violet-400"
+            >
               <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
               Creating…
-            </div>
+            </motion.div>
           )}
         </div>
 

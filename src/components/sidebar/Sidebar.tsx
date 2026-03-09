@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, MessageSquare, Trash2, X } from 'lucide-react';
+import { Plus, MessageSquare, Trash2, X, Sparkles } from 'lucide-react';
+import VizzyLogo from '@/components/ui/VizzyLogo';
 import { useChat } from '@/lib/ChatContext';
 import { cn, truncate, formatDate } from '@/lib/utils';
 import type { Conversation } from '@/types';
@@ -23,40 +24,49 @@ function ConversationItem({
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, x: -12 }}
+      initial={{ opacity: 0, x: -16 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -12 }}
+      exit={{ opacity: 0, x: -16, height: 0 }}
+      transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
-        'group relative flex items-center gap-2 px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-150',
+        'group relative flex items-center gap-2.5 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-150 overflow-hidden',
         isActive
-          ? 'bg-[#1e1e2e] border border-violet-900/50 text-white'
-          : 'hover:bg-[#1a1a1a] text-[#a1a1a1] hover:text-white border border-transparent',
+          ? 'bg-gradient-to-r from-violet-900/40 to-purple-900/20 border border-violet-700/30 text-white'
+          : 'hover:bg-[#13131f] text-[#9090b0] hover:text-white border border-transparent',
       )}
       onClick={onSelect}
     >
+      {/* Active indicator bar */}
+      {isActive && (
+        <motion.div
+          layoutId="activeBar"
+          className="absolute left-0 top-2 bottom-2 w-0.5 rounded-full bg-gradient-to-b from-violet-500 to-pink-500"
+        />
+      )}
+
       <MessageSquare
-        size={14}
+        size={13}
         className={cn(
           'flex-shrink-0',
-          isActive ? 'text-violet-400' : 'text-[#6b6b6b]',
+          isActive ? 'text-violet-400' : 'text-[#55556a]',
         )}
       />
       <div className="flex-1 min-w-0">
         <p className="text-[13px] font-medium truncate">{convo.title}</p>
-        <p className="text-[11px] text-[#6b6b6b] mt-0.5">
+        <p className="text-[10px] text-[#55556a] mt-0.5">
           {formatDate(convo.updatedAt)}
         </p>
       </div>
 
-      {/* Delete button */}
+      {/* Delete */}
       <button
         onClick={(e) => {
           e.stopPropagation();
           onDelete();
         }}
-        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-red-900/30 hover:text-red-400 text-[#6b6b6b]"
+        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-lg hover:bg-red-900/30 hover:text-red-400 text-[#55556a] flex-shrink-0"
       >
-        <Trash2 size={13} />
+        <Trash2 size={12} />
       </button>
     </motion.div>
   );
@@ -82,7 +92,7 @@ export default function Sidebar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 z-20 md:hidden"
+            className="fixed inset-0 bg-black/70 z-20 md:hidden backdrop-blur-sm"
             onClick={() => setSidebar(false)}
           />
         )}
@@ -92,26 +102,33 @@ export default function Sidebar() {
       <motion.aside
         initial={false}
         animate={{ x: sidebarOpen ? 0 : -280 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="fixed md:relative z-30 md:z-auto flex flex-col w-[260px] h-full bg-[#0d0d0d] border-r border-[#1f1f1f] flex-shrink-0"
+        transition={{ type: 'spring', stiffness: 320, damping: 32 }}
+        className="fixed md:relative z-30 md:z-auto flex flex-col w-[260px] h-full bg-[#080810] border-r border-[rgba(255,255,255,0.06)] flex-shrink-0"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-4 border-b border-[#1f1f1f]">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-violet-600 to-purple-700 flex items-center justify-center">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="white">
-                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-              </svg>
+        <div className="flex items-center justify-between px-4 py-4 border-b border-[rgba(255,255,255,0.06)]">
+          <div className="flex items-center gap-2.5">
+            <VizzyLogo size={30} showTail={false} />
+            <div className="flex items-baseline gap-0 leading-none select-none">
+              <span
+                className="text-[15px] font-extrabold text-white tracking-tight"
+                style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+              >
+                Vizzy
+              </span>
+              <span
+                className="text-[15px] font-extrabold text-sky-400 tracking-tight"
+                style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+              >
+                Chat
+              </span>
             </div>
-            <span className="text-[13px] font-semibold text-white tracking-tight">
-              VizzyChat
-            </span>
           </div>
           <button
             onClick={() => setSidebar(false)}
-            className="md:hidden p-1.5 rounded-lg hover:bg-[#1a1a1a] text-[#6b6b6b] hover:text-white transition-colors"
+            className="md:hidden p-1.5 rounded-lg hover:bg-[#13131f] text-[#55556a] hover:text-white transition-colors"
           >
-            <X size={15} />
+            <X size={14} />
           </button>
         </div>
 
@@ -119,19 +136,31 @@ export default function Sidebar() {
         <div className="px-3 pt-3 pb-2">
           <button
             onClick={newConversation}
-            className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border border-[#2a2a2a] hover:border-violet-800/60 hover:bg-[#1a1a1a] text-[#a1a1a1] hover:text-white text-[13px] font-medium transition-all duration-150"
+            className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl border border-[rgba(255,255,255,0.08)] hover:border-violet-700/50 hover:bg-[#13131f] text-[#9090b0] hover:text-white text-[13px] font-medium transition-all duration-200 group"
           >
-            <Plus size={15} className="text-violet-400" />
+            <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-violet-600 to-pink-500 flex items-center justify-center group-hover:shadow-md group-hover:shadow-violet-900/40 transition-shadow">
+              <Plus size={12} className="text-white" />
+            </div>
             New Chat
           </button>
         </div>
 
+        {/* Section label */}
+        {conversations.length > 0 && (
+          <p className="px-4 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-widest text-[#3a3a55]">
+            Recent
+          </p>
+        )}
+
         {/* Conversations list */}
         <div className="flex-1 overflow-y-auto px-2 py-1 space-y-0.5">
           {conversations.length === 0 ? (
-            <p className="text-[12px] text-[#6b6b6b] text-center py-8">
-              No chats yet
-            </p>
+            <div className="text-center py-10 px-4">
+              <Sparkles size={20} className="text-[#3a3a55] mx-auto mb-2" />
+              <p className="text-[12px] text-[#55556a]">
+                Your conversations will appear here
+              </p>
+            </div>
           ) : (
             <AnimatePresence initial={false}>
               {conversations.map((convo) => (
@@ -148,10 +177,11 @@ export default function Sidebar() {
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-3 border-t border-[#1f1f1f]">
-          <p className="text-[11px] text-[#4a4a4a] text-center">
-            VizzyChat AI
-          </p>
+        <div className="px-4 py-3 border-t border-[rgba(255,255,255,0.06)]">
+          <div className="flex items-center justify-center gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <p className="text-[11px] text-[#3a3a55]">VizzyChat AI</p>
+          </div>
         </div>
       </motion.aside>
     </>
