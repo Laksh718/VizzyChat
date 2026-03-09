@@ -94,7 +94,7 @@ export default function ChatInput({ onSend, isLoading }: ChatInputProps) {
       </div>
 
       <p className="text-center text-[11px] text-[#3a3a3a] mt-2">
-        VizzyChat can generate inaccurate images. Use for creative inspiration.
+        VizzyChat is built for creative exploration. Results may vary.
       </p>
     </div>
   );

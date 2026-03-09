@@ -150,7 +150,7 @@ export default function Sidebar() {
         {/* Footer */}
         <div className="px-4 py-3 border-t border-[#1f1f1f]">
           <p className="text-[11px] text-[#4a4a4a] text-center">
-            Powered by DALL·E 3 + GPT-4
+            VizzyChat AI
           </p>
         </div>
       </motion.aside>
