@@ -4,7 +4,6 @@ import React, { useRef, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import type { Message } from '@/types';
 import MessageBubble from './MessageBubble';
-import WelcomeScreen from './WelcomeScreen';
 
 type MessageListProps = {
   messages: Message[];
@@ -22,7 +21,8 @@ export default function MessageList({
   }, [messages]);
 
   if (messages.length === 0) {
-    return <WelcomeScreen onSuggestionClick={onSuggestionClick} />;
+    // WelcomeScreen is now rendered by ChatPage when there are no messages
+    return null;
   }
 
   return (

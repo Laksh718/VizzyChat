@@ -55,7 +55,6 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
-// ─── Helper: sanitize prompt ──────────────────────────────────────────────────
 
 function sanitizePrompt(prompt: string): string {
   // Remove potential injection attempts; keep it to reasonable length
@@ -76,10 +75,9 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Validate API key
   if (!process.env.OPENAI_API_KEY) {
     return NextResponse.json(
-      { error: 'OpenAI API key is not configured.' },
+      { error: 'API not configured.' },
       { status: 500 },
     );
   }

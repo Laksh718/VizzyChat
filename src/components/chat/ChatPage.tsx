@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu } from 'lucide-react';
 import VizzyLogo from '@/components/ui/VizzyLogo';
+import WelcomeScreen from '@/components/chat/WelcomeScreen';
 import { ChatProvider, useChat } from '@/lib/ChatContext';
 import { generateId, truncate } from '@/lib/utils';
 import type { Message, GeneratedImage } from '@/types';
@@ -117,60 +118,65 @@ function ChatContent() {
   const isLoading =
     activeConversation?.messages.some((m) => m.isGenerating) ?? false;
 
+  const hasMessages = (activeConversation?.messages ?? []).length > 0;
+
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#080810]">
-      {/* Sidebar */}
+      {/* Icon rail / sidebar */}
       <Sidebar />
 
-      {/* Main chat area */}
-      <div className="flex flex-col flex-1 min-w-0 h-full">
-        {/* Top bar */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-[rgba(255,255,255,0.06)] bg-[#080810]/80 backdrop-blur-sm flex-shrink-0">
-          <AnimatePresence mode="wait">
-            {!sidebarOpen && (
-              <motion.button
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -8 }}
-                onClick={toggleSidebar}
-                className="p-1.5 rounded-xl hover:bg-[#13131f] text-[#55556a] hover:text-white transition-colors"
-              >
-                <Menu size={17} />
-              </motion.button>
-            )}
-          </AnimatePresence>
-
-          <div className="flex items-center gap-2">
-            <VizzyLogo size={26} showTail={false} />
+      <div className="flex flex-col flex-1 min-w-0 h-full relative">
+        {/* Top bar — only visible when chatting */}
+        {hasMessages && (
+          <div className="flex items-center gap-3 px-4 py-3 border-b border-[rgba(255,255,255,0.06)] bg-[#080810]/90 backdrop-blur-sm flex-shrink-0">
+            {/* Mobile hamburger */}
+            <button
+              onClick={toggleSidebar}
+              className="md:hidden p-1.5 rounded-xl hover:bg-[#13131f] text-[#55556a] hover:text-white transition-colors"
+            >
+              <Menu size={17} />
+            </button>
+            <VizzyLogo size={22} showTail={false} />
             <span
-              className="text-[13px] font-semibold text-[#9090b0]"
+              className="text-[13px] font-semibold text-[#7070a0] truncate flex-1 min-w-0"
               style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
             >
               {activeConversation?.title ?? 'New Chat'}
             </span>
+            {isLoading && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center gap-1.5 text-[12px] text-violet-400 flex-shrink-0"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
+                Creating…
+              </motion.div>
+            )}
           </div>
+        )}
 
-          {isLoading && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="ml-auto flex items-center gap-1.5 text-[12px] text-violet-400"
+        {hasMessages ? (
+          <>
+            <MessageList
+              messages={activeConversation?.messages ?? []}
+              onSuggestionClick={handleSend}
+            />
+            <ChatInput onSend={handleSend} isLoading={isLoading} />
+          </>
+        ) : (
+          <>
+            {/* Mobile hamburger (floating, welcome state) */}
+            <button
+              onClick={toggleSidebar}
+              className="absolute top-4 left-4 md:hidden z-10 p-2 rounded-xl bg-[#13131f] text-[#55556a] hover:text-white transition-colors"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
-              Creating…
-            </motion.div>
-          )}
-        </div>
-
-        {/* Messages */}
-        <MessageList
-          messages={activeConversation?.messages ?? []}
-          onSuggestionClick={handleSend}
-        />
-
-        {/* Input */}
-        <ChatInput onSend={handleSend} isLoading={isLoading} />
+              <Menu size={17} />
+            </button>
+            <WelcomeScreen onSuggestionClick={handleSend} />
+          </>
+        )}
       </div>
 
       {/* Image lightbox */}

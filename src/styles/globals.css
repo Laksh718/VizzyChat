@@ -53,15 +53,14 @@ body::before {
   opacity: 0.6;
 }
 
-/* Ambient background orbs */
+/* Ambient background — warm Taskade-style glow */
 body::after {
   content: '';
   position: fixed;
-  top: -30vh;
-  left: -20vw;
-  width: 80vw;
-  height: 80vh;
-  background: radial-gradient(ellipse, rgba(124,58,237,0.08) 0%, transparent 70%);
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 18% 82%, rgba(160, 20, 35, 0.14) 0%, transparent 52%),
+    radial-gradient(ellipse at 75% 10%, rgba(80, 20, 160, 0.07) 0%, transparent 48%);
   pointer-events: none;
   z-index: 0;
 }
