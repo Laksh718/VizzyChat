@@ -27,6 +27,9 @@ yarn-error.log*
 .env
 .env*.local
 
+# API routes with keys / sensitive logic
+src/app/api/
+
 # vercel
 .vercel
 

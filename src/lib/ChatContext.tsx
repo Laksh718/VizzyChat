@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, {
   createContext,
@@ -6,10 +6,10 @@ import React, {
   useReducer,
   useCallback,
   useEffect,
-} from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import type { Conversation, Message, GeneratedImage } from '@/types';
-import { generateId } from '@/lib/utils';
+} from "react";
+import { v4 as uuidv4 } from "uuid";
+import type { Conversation, Message, GeneratedImage } from "@/types";
+import { generateId } from "@/lib/utils";
 
 // ─── State ────────────────────────────────────────────────────────────────────
 
@@ -20,10 +20,10 @@ type ChatState = {
   imageViewerSrc: string | null;
 };
 
-const STORAGE_KEY = 'vizzychat_conversations';
+const STORAGE_KEY = "vizzychat_conversations";
 
 function loadFromStorage(): Conversation[] {
-  if (typeof window === 'undefined') return [];
+  if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     return raw ? JSON.parse(raw) : [];
@@ -33,7 +33,7 @@ function loadFromStorage(): Conversation[] {
 }
 
 function saveToStorage(conversations: Conversation[]) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(conversations));
   } catch {}
@@ -43,7 +43,7 @@ function createNewConversation(): Conversation {
   const now = Date.now();
   return {
     id: uuidv4(),
-    title: 'New Chat',
+    title: "New Chat",
     messages: [],
     createdAt: now,
     updatedAt: now,
@@ -53,32 +53,32 @@ function createNewConversation(): Conversation {
 // ─── Actions ──────────────────────────────────────────────────────────────────
 
 type Action =
-  | { type: 'NEW_CONVERSATION' }
-  | { type: 'SET_ACTIVE'; id: string }
-  | { type: 'DELETE_CONVERSATION'; id: string }
-  | { type: 'ADD_MESSAGE'; conversationId: string; message: Message }
+  | { type: "NEW_CONVERSATION" }
+  | { type: "SET_ACTIVE"; id: string }
+  | { type: "DELETE_CONVERSATION"; id: string }
+  | { type: "ADD_MESSAGE"; conversationId: string; message: Message }
   | {
-      type: 'UPDATE_MESSAGE';
+      type: "UPDATE_MESSAGE";
       conversationId: string;
       messageId: string;
       updates: Partial<Message>;
     }
   | {
-      type: 'UPDATE_TITLE';
+      type: "UPDATE_TITLE";
       conversationId: string;
       title: string;
     }
-  | { type: 'TOGGLE_SIDEBAR' }
-  | { type: 'SET_SIDEBAR'; open: boolean }
-  | { type: 'OPEN_IMAGE_VIEWER'; src: string }
-  | { type: 'CLOSE_IMAGE_VIEWER' }
-  | { type: 'LOAD_CONVERSATIONS'; conversations: Conversation[] };
+  | { type: "TOGGLE_SIDEBAR" }
+  | { type: "SET_SIDEBAR"; open: boolean }
+  | { type: "OPEN_IMAGE_VIEWER"; src: string }
+  | { type: "CLOSE_IMAGE_VIEWER" }
+  | { type: "LOAD_CONVERSATIONS"; conversations: Conversation[] };
 
 // ─── Reducer ──────────────────────────────────────────────────────────────────
 
 function reducer(state: ChatState, action: Action): ChatState {
   switch (action.type) {
-    case 'LOAD_CONVERSATIONS': {
+    case "LOAD_CONVERSATIONS": {
       const conversations = action.conversations;
       return {
         ...state,
@@ -88,7 +88,7 @@ function reducer(state: ChatState, action: Action): ChatState {
       };
     }
 
-    case 'NEW_CONVERSATION': {
+    case "NEW_CONVERSATION": {
       const convo = createNewConversation();
       return {
         ...state,
@@ -97,14 +97,14 @@ function reducer(state: ChatState, action: Action): ChatState {
       };
     }
 
-    case 'SET_ACTIVE':
+    case "SET_ACTIVE":
       return { ...state, activeConversationId: action.id };
 
-    case 'DELETE_CONVERSATION': {
+    case "DELETE_CONVERSATION": {
       const filtered = state.conversations.filter((c) => c.id !== action.id);
       const newActive =
         state.activeConversationId === action.id
-          ? filtered[0]?.id ?? null
+          ? (filtered[0]?.id ?? null)
           : state.activeConversationId;
       return {
         ...state,
@@ -113,7 +113,7 @@ function reducer(state: ChatState, action: Action): ChatState {
       };
     }
 
-    case 'ADD_MESSAGE': {
+    case "ADD_MESSAGE": {
       const updated = state.conversations.map((c) => {
         if (c.id !== action.conversationId) return c;
         return {
@@ -125,7 +125,7 @@ function reducer(state: ChatState, action: Action): ChatState {
       return { ...state, conversations: updated };
     }
 
-    case 'UPDATE_MESSAGE': {
+    case "UPDATE_MESSAGE": {
       const updated = state.conversations.map((c) => {
         if (c.id !== action.conversationId) return c;
         return {
@@ -139,23 +139,23 @@ function reducer(state: ChatState, action: Action): ChatState {
       return { ...state, conversations: updated };
     }
 
-    case 'UPDATE_TITLE': {
+    case "UPDATE_TITLE": {
       const updated = state.conversations.map((c) =>
         c.id === action.conversationId ? { ...c, title: action.title } : c,
       );
       return { ...state, conversations: updated };
     }
 
-    case 'TOGGLE_SIDEBAR':
+    case "TOGGLE_SIDEBAR":
       return { ...state, sidebarOpen: !state.sidebarOpen };
 
-    case 'SET_SIDEBAR':
+    case "SET_SIDEBAR":
       return { ...state, sidebarOpen: action.open };
 
-    case 'OPEN_IMAGE_VIEWER':
+    case "OPEN_IMAGE_VIEWER":
       return { ...state, imageViewerSrc: action.src };
 
-    case 'CLOSE_IMAGE_VIEWER':
+    case "CLOSE_IMAGE_VIEWER":
       return { ...state, imageViewerSrc: null };
 
     default:
@@ -197,9 +197,9 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const stored = loadFromStorage();
     if (stored.length > 0) {
-      dispatch({ type: 'LOAD_CONVERSATIONS', conversations: stored });
+      dispatch({ type: "LOAD_CONVERSATIONS", conversations: stored });
     } else {
-      dispatch({ type: 'NEW_CONVERSATION' });
+      dispatch({ type: "NEW_CONVERSATION" });
     }
   }, []);
 
@@ -215,50 +215,46 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     null;
 
   const newConversation = useCallback(
-    () => dispatch({ type: 'NEW_CONVERSATION' }),
+    () => dispatch({ type: "NEW_CONVERSATION" }),
     [],
   );
   const setActive = useCallback(
-    (id: string) => dispatch({ type: 'SET_ACTIVE', id }),
+    (id: string) => dispatch({ type: "SET_ACTIVE", id }),
     [],
   );
   const deleteConversation = useCallback(
-    (id: string) => dispatch({ type: 'DELETE_CONVERSATION', id }),
+    (id: string) => dispatch({ type: "DELETE_CONVERSATION", id }),
     [],
   );
   const addMessage = useCallback(
     (conversationId: string, message: Message) =>
-      dispatch({ type: 'ADD_MESSAGE', conversationId, message }),
+      dispatch({ type: "ADD_MESSAGE", conversationId, message }),
     [],
   );
   const updateMessage = useCallback(
-    (
-      conversationId: string,
-      messageId: string,
-      updates: Partial<Message>,
-    ) =>
-      dispatch({ type: 'UPDATE_MESSAGE', conversationId, messageId, updates }),
+    (conversationId: string, messageId: string, updates: Partial<Message>) =>
+      dispatch({ type: "UPDATE_MESSAGE", conversationId, messageId, updates }),
     [],
   );
   const updateTitle = useCallback(
     (conversationId: string, title: string) =>
-      dispatch({ type: 'UPDATE_TITLE', conversationId, title }),
+      dispatch({ type: "UPDATE_TITLE", conversationId, title }),
     [],
   );
   const toggleSidebar = useCallback(
-    () => dispatch({ type: 'TOGGLE_SIDEBAR' }),
+    () => dispatch({ type: "TOGGLE_SIDEBAR" }),
     [],
   );
   const setSidebar = useCallback(
-    (open: boolean) => dispatch({ type: 'SET_SIDEBAR', open }),
+    (open: boolean) => dispatch({ type: "SET_SIDEBAR", open }),
     [],
   );
   const openImageViewer = useCallback(
-    (src: string) => dispatch({ type: 'OPEN_IMAGE_VIEWER', src }),
+    (src: string) => dispatch({ type: "OPEN_IMAGE_VIEWER", src }),
     [],
   );
   const closeImageViewer = useCallback(
-    () => dispatch({ type: 'CLOSE_IMAGE_VIEWER' }),
+    () => dispatch({ type: "CLOSE_IMAGE_VIEWER" }),
     [],
   );
 
@@ -286,6 +282,6 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
 export function useChat() {
   const ctx = useContext(ChatContext);
-  if (!ctx) throw new Error('useChat must be used within ChatProvider');
+  if (!ctx) throw new Error("useChat must be used within ChatProvider");
   return ctx;
 }

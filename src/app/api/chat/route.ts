@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
-import { v4 as uuidv4 } from 'uuid';
-import type { GeneratedImage, ImageSize } from '@/types';
+import { NextRequest, NextResponse } from "next/server";
+import OpenAI from "openai";
+import { v4 as uuidv4 } from "uuid";
+import type { GeneratedImage, ImageSize } from "@/types";
 
 // ─── System prompt ────────────────────────────────────────────────────────────
 
@@ -55,10 +55,9 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
-
 function sanitizePrompt(prompt: string): string {
   // Remove potential injection attempts; keep it to reasonable length
-  return prompt.trim().slice(0, 1000).replace(/[<>]/g, '');
+  return prompt.trim().slice(0, 1000).replace(/[<>]/g, "");
 }
 
 // ─── Route handler ────────────────────────────────────────────────────────────
@@ -66,20 +65,17 @@ function sanitizePrompt(prompt: string): string {
 export async function POST(req: NextRequest) {
   // Rate limiting
   const ip =
-    req.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? '127.0.0.1';
+    req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "127.0.0.1";
 
   if (!checkRateLimit(ip)) {
     return NextResponse.json(
-      { error: 'Too many requests. Please wait a moment.' },
+      { error: "Too many requests. Please wait a moment." },
       { status: 429 },
     );
   }
 
   if (!process.env.OPENAI_API_KEY) {
-    return NextResponse.json(
-      { error: 'API not configured.' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "API not configured." }, { status: 500 });
   }
 
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -88,23 +84,29 @@ export async function POST(req: NextRequest) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid request body." },
+      { status: 400 },
+    );
   }
 
   const { messages } = body;
 
   if (!Array.isArray(messages) || messages.length === 0) {
-    return NextResponse.json({ error: 'Messages are required.' }, { status: 400 });
+    return NextResponse.json(
+      { error: "Messages are required." },
+      { status: 400 },
+    );
   }
 
   // Validate message structure
   for (const msg of messages) {
     if (
-      typeof msg.content !== 'string' ||
-      !['user', 'assistant'].includes(msg.role)
+      typeof msg.content !== "string" ||
+      !["user", "assistant"].includes(msg.role)
     ) {
       return NextResponse.json(
-        { error: 'Invalid message format.' },
+        { error: "Invalid message format." },
         { status: 400 },
       );
     }
@@ -113,28 +115,28 @@ export async function POST(req: NextRequest) {
   try {
     // Step 1: Chat completion to understand intent
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: "gpt-4o-mini",
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
+        { role: "system", content: SYSTEM_PROMPT },
         ...messages.map((m) => ({
-          role: m.role as 'user' | 'assistant',
+          role: m.role as "user" | "assistant",
           content: m.content,
         })),
       ],
-      response_format: { type: 'json_object' },
+      response_format: { type: "json_object" },
       max_tokens: 1024,
       temperature: 0.8,
     });
 
-    const rawContent = completion.choices[0]?.message?.content ?? '{}';
+    const rawContent = completion.choices[0]?.message?.content ?? "{}";
     let parsed: {
       message?: string;
       shouldGenerateImages?: boolean;
       imageCount?: number;
       imagePrompts?: string[];
       imageSize?: ImageSize;
-      imageStyle?: 'vivid' | 'natural';
-      imageQuality?: 'standard' | 'hd';
+      imageStyle?: "vivid" | "natural";
+      imageQuality?: "standard" | "hd";
     };
 
     try {
@@ -146,8 +148,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const responseText =
-      parsed.message ?? "Here's what I created for you!";
+    const responseText = parsed.message ?? "Here's what I created for you!";
 
     // Step 2: Generate images if requested
     let generatedImages: GeneratedImage[] = [];
@@ -155,15 +156,15 @@ export async function POST(req: NextRequest) {
     if (parsed.shouldGenerateImages && parsed.imagePrompts?.length) {
       const count = Math.min(parsed.imageCount ?? 1, 4);
       const prompts = parsed.imagePrompts.slice(0, count);
-      const size: ImageSize = parsed.imageSize ?? '1024x1024';
-      const quality = parsed.imageQuality ?? 'standard';
-      const style = parsed.imageStyle ?? 'vivid';
+      const size: ImageSize = parsed.imageSize ?? "1024x1024";
+      const quality = parsed.imageQuality ?? "standard";
+      const style = parsed.imageStyle ?? "vivid";
 
       // Generate images in parallel (DALL·E 3 only supports n=1, so parallel requests)
       const imagePromises = prompts.map(async (prompt) => {
         const safePrompt = sanitizePrompt(prompt);
         const result = await openai.images.generate({
-          model: 'dall-e-3',
+          model: "dall-e-3",
           prompt: safePrompt,
           n: 1,
           size,
@@ -172,10 +173,10 @@ export async function POST(req: NextRequest) {
         });
 
         const data = result.data?.[0];
-        if (!data) throw new Error('No image data returned');
+        if (!data) throw new Error("No image data returned");
         return {
           id: uuidv4(),
-          url: data.url ?? '',
+          url: data.url ?? "",
           prompt: safePrompt,
           revisedPrompt: data.revised_prompt,
           createdAt: Date.now(),
@@ -190,7 +191,7 @@ export async function POST(req: NextRequest) {
       { status: 200 },
     );
   } catch (err: unknown) {
-    console.error('[VizzyChat API Error]', err);
+    console.error("[VizzyChat API Error]", err);
 
     if (err instanceof OpenAI.APIError) {
       if (err.status === 429) {
@@ -217,8 +218,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       {
-        content:
-          'Something went wrong on my end. Please try again.',
+        content: "Something went wrong on my end. Please try again.",
         images: [],
       },
       { status: 200 },

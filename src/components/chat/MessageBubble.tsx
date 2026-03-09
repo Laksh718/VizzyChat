@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { AlertCircle } from 'lucide-react';
-import type { Message } from '@/types';
-import { formatDate } from '@/lib/utils';
-import { useChat } from '@/lib/ChatContext';
-import ImageGrid from './ImageGrid';
-import TypingIndicator from './TypingIndicator';
+import React from "react";
+import { motion } from "framer-motion";
+import { AlertCircle } from "lucide-react";
+import type { Message } from "@/types";
+import { formatDate } from "@/lib/utils";
+import { useChat } from "@/lib/ChatContext";
+import ImageGrid from "./ImageGrid";
+import TypingIndicator from "./TypingIndicator";
 
 type MessageBubbleProps = {
   message: Message;
@@ -91,10 +91,9 @@ function AssistantBubble({ message }: { message: Message; isLast?: boolean }) {
 }
 
 export default function MessageBubble({ message, isLast }: MessageBubbleProps) {
-  return message.role === 'user' ? (
+  return message.role === "user" ? (
     <UserBubble message={message} />
   ) : (
     <AssistantBubble message={message} isLast={isLast} />
   );
 }
-

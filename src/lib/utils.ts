@@ -1,5 +1,5 @@
-import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -13,20 +13,20 @@ export function formatDate(timestamp: number): string {
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
 
-  if (diffMins < 1) return 'Just now';
+  if (diffMins < 1) return "Just now";
   if (diffMins < 60) return `${diffMins}m ago`;
   if (diffHours < 24) return `${diffHours}h ago`;
   if (diffDays < 7) return `${diffDays}d ago`;
 
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
   });
 }
 
 export function truncate(str: string, maxLen = 40): string {
   if (str.length <= maxLen) return str;
-  return str.slice(0, maxLen).trimEnd() + '…';
+  return str.slice(0, maxLen).trimEnd() + "…";
 }
 
 export function generateId(): string {
@@ -59,10 +59,30 @@ export function extractImageCount(text: string): number {
 
 export function isImageRequest(text: string): boolean {
   const keywords = [
-    'paint', 'draw', 'generate', 'create', 'make', 'design', 'show',
-    'visualize', 'render', 'illustrate', 'artwork', 'image', 'picture',
-    'photo', 'poster', 'visual', 'scene', 'landscape', 'portrait',
-    'turn this', 'convert', 'transform', 'style', 'vision board',
+    "paint",
+    "draw",
+    "generate",
+    "create",
+    "make",
+    "design",
+    "show",
+    "visualize",
+    "render",
+    "illustrate",
+    "artwork",
+    "image",
+    "picture",
+    "photo",
+    "poster",
+    "visual",
+    "scene",
+    "landscape",
+    "portrait",
+    "turn this",
+    "convert",
+    "transform",
+    "style",
+    "vision board",
   ];
   const lower = text.toLowerCase();
   return keywords.some((kw) => lower.includes(kw));

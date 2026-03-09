@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React, { useRef, useEffect } from 'react';
-import { AnimatePresence } from 'framer-motion';
-import type { Message } from '@/types';
-import MessageBubble from './MessageBubble';
+import React, { useRef, useEffect } from "react";
+import { AnimatePresence } from "framer-motion";
+import type { Message } from "@/types";
+import MessageBubble from "./MessageBubble";
 
 type MessageListProps = {
   messages: Message[];
@@ -17,7 +17,7 @@ export default function MessageList({
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   if (messages.length === 0) {

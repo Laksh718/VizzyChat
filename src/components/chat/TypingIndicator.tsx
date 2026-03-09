@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 type TypingIndicatorProps = {
   className?: string;
@@ -15,7 +15,7 @@ export default function TypingIndicator({ className }: TypingIndicatorProps) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-      className={cn('flex items-center gap-3 px-4 py-2', className)}
+      className={cn("flex items-center gap-3 px-4 py-2", className)}
     >
       {/* Avatar */}
       <div className="flex-shrink-0 w-8 h-8 rounded-2xl bg-gradient-to-br from-violet-600 via-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-violet-900/30">

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useRef, useState, useCallback, KeyboardEvent } from 'react';
-import TextareaAutosize from 'react-textarea-autosize';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUp, Loader2, Sparkles } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React, { useRef, useState, useCallback, KeyboardEvent } from "react";
+import TextareaAutosize from "react-textarea-autosize";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowUp, Loader2, Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type ChatInputProps = {
   onSend: (text: string) => void;
@@ -12,15 +12,15 @@ type ChatInputProps = {
 };
 
 const PLACEHOLDER_PROMPTS = [
-  'Paint something that feels like nostalgia…',
-  'Create a vision board for my next chapter…',
-  'Turn this idea into a dreamlike visual…',
-  'Design something that feels premium and warm…',
-  'Show me a city at dusk, surreal and beautiful…',
+  "Paint something that feels like nostalgia…",
+  "Create a vision board for my next chapter…",
+  "Turn this idea into a dreamlike visual…",
+  "Design something that feels premium and warm…",
+  "Show me a city at dusk, surreal and beautiful…",
 ];
 
 export default function ChatInput({ onSend, isLoading }: ChatInputProps) {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState("");
   const [focused, setFocused] = useState(false);
   const [placeholderIdx] = useState(() =>
     Math.floor(Math.random() * PLACEHOLDER_PROMPTS.length),
@@ -31,12 +31,12 @@ export default function ChatInput({ onSend, isLoading }: ChatInputProps) {
     const trimmed = value.trim();
     if (!trimmed || isLoading) return;
     onSend(trimmed);
-    setValue('');
+    setValue("");
     textareaRef.current?.focus();
   }, [value, isLoading, onSend]);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
@@ -48,11 +48,11 @@ export default function ChatInput({ onSend, isLoading }: ChatInputProps) {
     <div className="px-4 pb-5 pt-2 relative z-10">
       <div
         className={cn(
-          'relative flex items-end gap-3 rounded-2xl px-4 py-3.5 transition-all duration-300',
-          'bg-[#0e0e1a] border',
+          "relative flex items-end gap-3 rounded-2xl px-4 py-3.5 transition-all duration-300",
+          "bg-[#0e0e1a] border",
           focused
-            ? 'border-violet-500/50 shadow-[0_0_0_3px_rgba(124,58,237,0.12),0_0_30px_rgba(124,58,237,0.08)]'
-            : 'border-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.12)]',
+            ? "border-violet-500/50 shadow-[0_0_0_3px_rgba(124,58,237,0.12),0_0_30px_rgba(124,58,237,0.08)]"
+            : "border-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.12)]",
         )}
       >
         {/* Icon */}
@@ -78,8 +78,8 @@ export default function ChatInput({ onSend, isLoading }: ChatInputProps) {
               <Sparkles
                 size={16}
                 className={cn(
-                  'transition-colors duration-300',
-                  focused ? 'text-violet-400' : 'text-[#55556a]',
+                  "transition-colors duration-300",
+                  focused ? "text-violet-400" : "text-[#55556a]",
                 )}
               />
             </motion.div>
@@ -108,10 +108,10 @@ export default function ChatInput({ onSend, isLoading }: ChatInputProps) {
           onClick={handleSend}
           disabled={!canSend}
           className={cn(
-            'flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 self-end',
+            "flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 self-end",
             canSend
-              ? 'bg-gradient-to-br from-violet-600 to-pink-500 text-white shadow-lg shadow-violet-900/40'
-              : 'bg-[#1a1a2e] text-[#3a3a55] cursor-not-allowed',
+              ? "bg-gradient-to-br from-violet-600 to-pink-500 text-white shadow-lg shadow-violet-900/40"
+              : "bg-[#1a1a2e] text-[#3a3a55] cursor-not-allowed",
           )}
         >
           <ArrowUp size={16} strokeWidth={2.5} />
